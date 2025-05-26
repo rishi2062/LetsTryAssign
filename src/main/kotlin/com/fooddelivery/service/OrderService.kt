@@ -71,19 +71,4 @@ class OrderService(
         return orderRepository.save(order).toDto()
     }
 
-    private fun Order.toDto() = OrderDto(
-        id = id!!.toHexString(),
-        customerId = customerId.toHexString(),
-        restaurantId = restaurantId.toHexString(),
-        items = items.map { it.toDto() },
-        status = status,
-        timestamp = timestamp,
-        totalAmount = totalAmount
-    )
-
-    private fun OrderItem.toDto() = OrderItemDto(
-        menuItemId = menuItemId,
-        quantity = quantity,
-        price = price
-    )
 } 

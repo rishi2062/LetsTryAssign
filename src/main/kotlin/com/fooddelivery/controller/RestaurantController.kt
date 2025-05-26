@@ -5,7 +5,6 @@ import com.fooddelivery.service.RestaurantService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import org.bson.types.ObjectId
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -37,20 +36,14 @@ class RestaurantController(private val restaurantService: RestaurantService) {
 
     @PostMapping("/{id}/menu")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Add a new menu item to restaurant")
-    fun addMenuItem(
+    @Operation(summary = "Add/Update a menu item to restaurant")
+    fun upsertMenuItem(
         @PathVariable id: String,
-        @Valid @RequestBody request: CreateMenuItemRequest
+        @Valid @RequestBody request: UpsertMenuItemRequest
     ): MenuItemDto =
-        restaurantService.addMenuItem(id, request)
+        restaurantService.upsertMenuItem(id, request)
 
-    @PutMapping("/menu-items/{id}")
-    @Operation(summary = "Update a menu item")
-    fun updateMenuItem(
-        @PathVariable id: String,
-        @Valid @RequestBody request: UpdateMenuItemRequest
-    ): MenuItemDto =
-        restaurantService.updateMenuItem(id, request)
+
 
     @DeleteMapping("/menu-items/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

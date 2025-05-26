@@ -2,7 +2,6 @@ package com.fooddelivery.dto
 
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Positive
-import org.bson.types.ObjectId
 import java.math.BigDecimal
 
 data class RestaurantDto(
@@ -26,7 +25,10 @@ data class MenuItemDto(
     val restaurantId: String
 )
 
-data class CreateMenuItemRequest(
+data class UpsertMenuItemRequest(
+
+    val id: String? = null,
+
     @field:NotBlank(message = "Menu item name is required")
     val name: String,
     
