@@ -5,6 +5,7 @@ import com.fooddelivery.domain.Restaurant
 import com.fooddelivery.dto.*
 import com.fooddelivery.repository.MenuItemRepository
 import com.fooddelivery.repository.RestaurantRepository
+import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.data.mongodb.core.MongoTemplate
@@ -23,7 +24,7 @@ class RestaurantService(
         restaurantRepository.findAll().map { it.toDto() }
 
     fun getRestaurantById(id: String): RestaurantDto =
-        restaurantRepository.findById(id)
+        restaurantRepository.findById(ObjectId(id))
             .orElseThrow { NoSuchElementException("Restaurant not found with id: $id") }
             .toDto()
 
@@ -36,26 +37,27 @@ class RestaurantService(
             .toDto()
 
     fun getRestaurantMenu(restaurantId: String): List<MenuItemDto> =
-        menuItemRepository.findByRestaurantId(restaurantId)
+        menuItemRepository.findByRestaurantId(ObjectId(restaurantId))
             .map { it.toDto() }
 
     @Transactional
     fun addMenuItem(restaurantId: String, request: CreateMenuItemRequest): MenuItemDto {
-        if (!restaurantRepository.existsById(restaurantId)) {
+        val restMongoId = ObjectId(restaurantId)
+        if (!restaurantRepository.existsById(restMongoId)) {
             throw NoSuchElementException("Restaurant not found with id: $restaurantId")
         }
 
         return MenuItem(
             name = request.name,
             price = request.price,
-            restaurantId = restaurantId
+            restaurantId = restMongoId
         ).let { menuItemRepository.save(it) }
             .toDto()
     }
 
     @Transactional
     fun updateMenuItem(menuItemId: String, request: UpdateMenuItemRequest): MenuItemDto {
-        val menuItem = menuItemRepository.findById(menuItemId)
+        val menuItem = menuItemRepository.findById(ObjectId(menuItemId))
             .orElseThrow { NoSuchElementException("Menu item not found with id: $menuItemId") }
 
         return menuItem.copy(
@@ -67,22 +69,23 @@ class RestaurantService(
 
     @Transactional
     fun deleteMenuItem(menuItemId: String) {
-        if (!menuItemRepository.existsById(menuItemId)) {
+        val menuItemMongoId = ObjectId(menuItemId)
+        if (!menuItemRepository.existsById(menuItemMongoId)) {
             throw NoSuchElementException("Menu item not found with id: $menuItemId")
         }
-        menuItemRepository.deleteById(menuItemId)
+        menuItemRepository.deleteById(menuItemMongoId)
     }
 
     private fun Restaurant.toDto() = RestaurantDto(
-        id = id,
+        id = id!!.toHexString(),
         name = name,
         address = address
     )
 
     private fun MenuItem.toDto() = MenuItemDto(
-        id = id,
+        id = id!!.toHexString(),
         name = name,
         price = price,
-        restaurantId = restaurantId
+        restaurantId = restaurantId.toHexString()
     )
 } 

@@ -2,10 +2,11 @@ package com.fooddelivery.dto
 
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Positive
+import org.bson.types.ObjectId
 import java.math.BigDecimal
 
 data class RestaurantDto(
-    val id: String? = null,
+    val id: String?=null,
     val name: String,
     val address: String
 )

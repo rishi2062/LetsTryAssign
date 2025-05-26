@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.index.Indexed
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Positive
+import org.bson.types.ObjectId
 import java.math.BigDecimal
 import java.time.Instant
 
@@ -20,14 +21,14 @@ enum class OrderStatus {
 @Document(collection = "orders")
 data class Order(
     @Id
-    val id: String? = null,
+    val id: ObjectId? = ObjectId.get(),
 
     @Indexed
     @NotBlank
-    val customerId: String,
+    val customerId: ObjectId,
 
     @Indexed
-    val restaurantId: String,
+    val restaurantId: ObjectId,
 
     val items: List<OrderItem>,
 
@@ -41,7 +42,7 @@ data class Order(
 
 data class OrderItem(
     @NotNull
-    val menuItemId: String,
+    val menuItemId: ObjectId? = ObjectId.get(),
 
     @NotNull
     @Positive

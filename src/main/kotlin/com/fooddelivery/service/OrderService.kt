@@ -5,6 +5,7 @@ import com.fooddelivery.dto.*
 import com.fooddelivery.repository.MenuItemRepository
 import com.fooddelivery.repository.OrderRepository
 import com.fooddelivery.repository.RestaurantRepository
+import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.NoSuchElementException
@@ -18,15 +19,19 @@ class OrderService(
 ) {
     @Transactional
     fun createOrder(request: CreateOrderRequest): OrderDto {
-        if (!restaurantRepository.existsById(request.restaurantId)) {
+
+        val customerId = ObjectId(request.customerId)
+        val restaurantId = ObjectId(request.restaurantId)
+
+        if (!restaurantRepository.existsById(ObjectId(request.restaurantId))) {
             throw NoSuchElementException("Restaurant not found with id: ${request.restaurantId}")
         }
 
         val orderItems = request.items.map { itemRequest ->
-            val menuItem = menuItemRepository.findById(itemRequest.menuItemId)
+            val menuItem = menuItemRepository.findById(ObjectId(itemRequest.menuItemId))
                 .orElseThrow { NoSuchElementException("Menu item not found with id: ${itemRequest.menuItemId}") }
 
-            if (menuItem.restaurantId != request.restaurantId) {
+            if (menuItem.restaurantId != restaurantId) {
                 throw IllegalArgumentException("Menu item ${menuItem.id} does not belong to restaurant ${request.restaurantId}")
             }
 
@@ -40,8 +45,8 @@ class OrderService(
         val totalAmount = orderItems.sumOf { it.price.multiply(BigDecimal(it.quantity)) }
 
         val order = Order(
-            customerId = request.customerId,
-            restaurantId = request.restaurantId,
+            customerId = customerId,
+            restaurantId = restaurantId,
             items = orderItems,
             totalAmount = totalAmount
         )
@@ -50,16 +55,16 @@ class OrderService(
     }
 
     fun getCustomerOrders(customerId: String): List<OrderDto> =
-        orderRepository.findByCustomerId(customerId)
+        orderRepository.findByCustomerId(ObjectId(customerId))
             .map { it.toDto() }
 
     fun getRestaurantOrders(restaurantId: String): List<OrderDto> =
-        orderRepository.findByRestaurantId(restaurantId)
+        orderRepository.findByRestaurantId(ObjectId(restaurantId))
             .map { it.toDto() }
 
     @Transactional
     fun updateOrderStatus(orderId: String, request: UpdateOrderStatusRequest): OrderDto {
-        val order = orderRepository.findById(orderId)
+        val order = orderRepository.findById(ObjectId(orderId))
             .orElseThrow { NoSuchElementException("Order not found with id: $orderId") }
 
         order.status = request.status
@@ -67,9 +72,9 @@ class OrderService(
     }
 
     private fun Order.toDto() = OrderDto(
-        id = id,
-        customerId = customerId,
-        restaurantId = restaurantId,
+        id = id!!.toHexString(),
+        customerId = customerId.toHexString(),
+        restaurantId = restaurantId.toHexString(),
         items = items.map { it.toDto() },
         status = status,
         timestamp = timestamp,
