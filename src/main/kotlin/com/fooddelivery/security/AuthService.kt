@@ -15,16 +15,22 @@ import java.util.Base64
 
 @Service
 class AuthService(
-    private val jwtService: JWTService,
+    private val jwtService: JwtService,
     private val passwordEncoder: PasswordEncoder,
     private val userRepository: UserRepository,
     private val refreshTokenRepository: RefreshTokenRepository
 ) {
     fun register(request: RegisterRequest) : User {
+        val email = userRepository.findByEmail(request.email)
+        if(email != null) {
+            throw IllegalArgumentException("User already exists")
+        }
+        val userName = request.name ?:  request.email.substringBefore("@")
         val user = User(
-            name = request.name,
+            name = userName,
             email = request.email,
-            encodedPassword = passwordEncoder.encode(request.password)
+            encodedPassword = passwordEncoder.encode(request.password),
+            role = request.role
         )
         return userRepository.save(user)
     }
