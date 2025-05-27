@@ -4,6 +4,12 @@ A Spring Boot-based REST API for a food delivery platform that supports multiple
 
 ## Features
 
+- Authentication & Authorization
+    - User registration
+    - User login with JWT authentication
+    - Token refresh mechanism
+    - Role-based access control (Customer/Restaurant)
+  
 - Restaurant Management
   - Create and retrieve restaurants
   - Manage restaurant menus (add, update, delete menu items)
@@ -27,6 +33,13 @@ A Spring Boot-based REST API for a food delivery platform that supports multiple
 - JDK 17 or later
 - MongoDB 6.0 or later
 - Docker (optional, for containerization)
+
+### Environment Variables
+
+The following environment variables are required:
+- `MONGO_DB_LETSTRY_ASSIGNMENT_CONNECTION`: MongoDB connection string
+- `JWT_ENCODER_BASE64`: Base64-encoded secret key for JWT signing
+
 
 ## Getting Started
 
@@ -87,7 +100,25 @@ Once the application is running, you can access the Swagger UI at:
 - `GET /api/orders/restaurant/{restaurantId}` - Get restaurant orders
 - `PATCH /api/orders/{id}/status` - Update order status
 
+#### Authentication
+
+- `POST /auth/register` - Register a new user
+- `POST /auth/login` - Login user and get access/refresh tokens
+- `POST /auth/refresh` - Refresh access token using refresh token
+
 ## Data Models
+
+### User
+
+```json 
+{ 
+  "id": "507f1f77bcf86cd799439014",
+  "name": "John Doe", 
+  "email": "john@example.com",
+  "role": "CUSTOMER" }
+```
+
+
 
 ### Restaurant
 ```json
@@ -151,6 +182,7 @@ src/main/kotlin/com/fooddelivery/
 ├── FoodDeliveryApplication.kt
 ├── controller/
 │   ├── RestaurantController.kt
+│   ├── AuthController.kt
 │   └── OrderController.kt
 ├── service/
 │   ├── RestaurantService.kt
@@ -158,13 +190,19 @@ src/main/kotlin/com/fooddelivery/
 ├── repository/
 │   ├── RestaurantRepository.kt
 │   ├── MenuItemRepository.kt
+│   ├── UserRepository.kt
+│   ├── RefreshTokenRepository.kt
 │   └── OrderRepository.kt
 ├── domain/
 │   ├── Restaurant.kt
+│   ├── User.kt
+│   ├── RefreshToken.kt
 │   ├── MenuItem.kt
 │   └── Order.kt
 ├── dto/
 │   ├── RestaurantDto.kt
+│   ├── Mappers.kt
+│   ├── UserDto.kt
 │   └── OrderDto.kt
 └── exception/
     └── GlobalExceptionHandler.kt
@@ -179,11 +217,26 @@ The application uses MongoDB as its database. MongoDB provides:
 - Built-in support for horizontal scaling
 - Rich querying capabilities
 
-To connect to MongoDB:
-- Host: localhost
-- Port: 27017
-- Database: fooddelivery
 
-## License
 
-This project is licensed under the MIT License. 
+## Security
+
+The API uses JWT (JSON Web Tokens) for authentication and authorization:
+
+- Access tokens expire after 15 minutes
+- Refresh tokens are valid for 30 days
+- Passwords are encrypted using BCrypt
+- Protected endpoints require a valid JWT in the Authorization header
+- Token format: `Bearer <token>`
+
+To access protected endpoints:
+1. Register a user or login to get tokens
+2. Include the access token in the Authorization header
+3. Use refresh token to get a new access token when expired
+
+
+## Still Pending
+
+- [ ] Role Based Api access
+- [ ] Instead of taking customerId , restaurantId based on role , we can make use of userId
+- [ ] Docker Deployment , tried but left due to time constriant
