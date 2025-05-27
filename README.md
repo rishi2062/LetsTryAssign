@@ -244,4 +244,3 @@ https://.postman.co/workspace/My-Workspace~2e565256-8030-42d5-87db-77201bed717f/
 - [ ] Role Based Api access
 - [ ] Instead of taking customerId , restaurantId based on role , we can make use of userId
 - [ ] Valid Error Codes
-- [ ] Docker Deployment , tried but left due to time constriant
