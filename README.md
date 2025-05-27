@@ -234,9 +234,12 @@ To access protected endpoints:
 2. Include the access token in the Authorization header
 3. Use refresh token to get a new access token when expired
 
+## Postman
+https://.postman.co/workspace/My-Workspace~2e565256-8030-42d5-87db-77201bed717f/collection/29786233-4e4f99b6-3406-46ce-8a1a-a5c383c65c4e?action=share&creator=29786233
 
 ## Still Pending
 
 - [ ] Role Based Api access
 - [ ] Instead of taking customerId , restaurantId based on role , we can make use of userId
+- [ ] Valid Error Codes
 - [ ] Docker Deployment , tried but left due to time constriant
