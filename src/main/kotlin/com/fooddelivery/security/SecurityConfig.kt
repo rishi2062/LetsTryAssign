@@ -22,18 +22,12 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/")
-                    .permitAll()
-                    .requestMatchers("/auth/**")
-                    .permitAll()
-                    .requestMatchers("/swagger-ui/**")
-                    .permitAll()
-                    .requestMatchers("/swagger-ui.html")
-                    .permitAll()
-                    .requestMatchers("/api-docs/**")
-                    .permitAll()
-                    .requestMatchers("/v3/api-docs/**")
-                    .permitAll()
+                    .requestMatchers("/").permitAll()
+                    .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/swagger-ui/**").permitAll()
+                    .requestMatchers("/swagger-ui.html").permitAll()
+                    .requestMatchers("/api-docs/**").permitAll()
+                    .requestMatchers("/v3/api-docs/**").permitAll()
                     .dispatcherTypeMatchers(
                         DispatcherType.ERROR,
                         DispatcherType.FORWARD
@@ -41,10 +35,6 @@ class SecurityConfig(
                     .permitAll()
                     .anyRequest()
                     .authenticated()
-            }
-            .exceptionHandling { configurer ->
-                configurer
-                    .authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             }
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
             .build()

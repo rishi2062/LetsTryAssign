@@ -42,11 +42,15 @@ class JwtService(
     }
 
     fun validateToken(token : String , type: String) : Boolean {
-        val claims = parseAllClaims(token) ?: return false
+        try {
+            val claims = parseAllClaims(token) ?: return false
 
-        val tokenType = claims.get("type") as? String ?: return false
+            val tokenType = claims.get("type") as? String ?: return false
+            return tokenType == type
+        } catch (e: Exception) {
+            return false
+        }
 
-        return tokenType == type
     }
 
     fun getUserIdFromToken(token : String) : String {
