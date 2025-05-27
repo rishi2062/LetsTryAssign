@@ -46,6 +46,8 @@ The following environment variables are required:
 ### Running Locally
 
 1. Clone the repository
+2. For best usage, Try on IntelliJ IDE , edit configurations to add environment variables
+
 2. Start MongoDB:
    ```bash
    mongod --dbpath /path/to/data/directory
@@ -65,7 +67,7 @@ The application will start on `http://localhost:8080/api`
 
 1. Start MongoDB:
    ```bash
-   docker run -d -p 27017:27017 --name mongodb mongo:6.0
+   docker run -d -p 27017:27017 --name mongodb mongo:7.0
    ```
 2. Build the application image:
    ```bash
