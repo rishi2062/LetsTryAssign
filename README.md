@@ -43,11 +43,11 @@ The following environment variables are required:
 
 ## Getting Started
 
+### Note : If you find issue in running locally, try with IntelliJ IDE
+
 ### Running Locally
 
 1. Clone the repository
-2. For best usage, Try on IntelliJ IDE , edit configurations to add environment variables
-
 2. Start MongoDB:
    ```bash
    mongod --dbpath /path/to/data/directory
